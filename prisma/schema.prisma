@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+enum Status {
+  AUTHORISED
+  AWAITING_AUTHORISATION
+  REJECTED
+}
+
+model Consent {
+  consentId               String         @id
+  loggedUser              LoggedUser     @relation(fields: [loggedUserId], references: [id])
+  businessEntity          BusinessEntity @relation(fields: [businessEntityId], references: [id])
+  expirationDateTime      DateTime
+  transactionFromDateTime DateTime
+  transactionToDateTime   DateTime
+  loggedUserId            String
+  businessEntityId        String
+  permissions             String[]
+  creationDateTime        DateTime       @default(now())
+  status                  Status         @default(AWAITING_AUTHORISATION)
+  statusUpdateDateTime    DateTime       @updatedAt
+  links                   Link?          @relation(fields: [linkId], references: [id])
+  meta                    Meta?          @relation(fields: [metaId], references: [id])
+  linkId                  String?
+  metaId                  String?
+}
+
+model LoggedUser {
+  id         String    @id @default(cuid())
+  Consent    Consent[]
+  createdAt  DateTime  @default(now())
+  document   Document  @relation(fields: [documentId], references: [id])
+  documentId String
+}
+
+model BusinessEntity {
+  id         String    @id @default(cuid())
+  Consent    Consent[]
+  createdAt  DateTime  @default(now())
+  document   Document  @relation(fields: [documentId], references: [id])
+  documentId String
+}
+
+model Document {
+  id             String           @id @default(cuid())
+  identification String
+  rel            String
+  LoggedUser     LoggedUser[]
+  createdAt      DateTime         @default(now())
+  BusinessEntity BusinessEntity[]
+}
+
+model Link {
+  id      String    @id @default(cuid())
+  self    String
+  first   String
+  prev    String
+  next    String
+  last    String
+  Consent Consent[]
+}
+
+model Meta {
+  id              String    @id @default(cuid())
+  totalPages      Int
+  totalRecords    Int
+  requestDateTime DateTime  @default(now())
+  Consent         Consent[]
+}
