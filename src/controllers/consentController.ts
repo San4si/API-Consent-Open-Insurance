@@ -57,3 +57,13 @@ export const create = async (req: Request, res: Response) => {
 export const update = async () => {};
 
 export const remove = async () => {};
+
+/*
+let {status, permissions } = req.body;
+    
+   let newConsent = await Consent.create({status, permissions}); 
+   
+    res.json({ id: newConsent.id, status, permissions});
+      
+
+*/

@@ -1,10 +1,10 @@
+import { BusinessEntity, Link, LoggedUser, Meta } from "../../../entities";
+
 export interface CreateConsentDTO {
   expirationDateTime: string;
   transactionFromDateTime: string;
   transactionToDateTime: string;
-  loggedUserId: string;
-  businessEntityId: string;
-  permissions: string;
-  linkId: string;
-  metaId: string;
+  loggedUser: LoggedUser;
+  businessEntity: BusinessEntity;
+  permissions: string[];
 }

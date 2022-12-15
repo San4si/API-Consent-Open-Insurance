@@ -11,7 +11,7 @@ CREATE TABLE "Consent" (
     "businessEntityId" TEXT NOT NULL,
     "permissions" TEXT[],
     "creationDateTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "status" "Status" NOT NULL,
+    "status" "Status" NOT NULL DEFAULT 'AWAITING_AUTHORISATION',
     "statusUpdateDateTime" TIMESTAMP(3) NOT NULL,
     "linkId" TEXT,
     "metaId" TEXT,
