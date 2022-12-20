@@ -62,6 +62,8 @@ model Document {
   LoggedUser     LoggedUser[]
   createdAt      DateTime         @default(now())
   BusinessEntity BusinessEntity[]
+  User           User?            @relation(fields: [userId], references: [id])
+  userId         String?
 }
 
 model Link {
@@ -80,4 +82,23 @@ model Meta {
   totalRecords    Int
   requestDateTime DateTime  @default(now())
   Consent         Consent[]
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  password      String
+  createdAt     DateTime       @default(now())
+  document      Document[]
+  refresh_token RefreshToken[]
+}
+
+model RefreshToken {
+  id        String @id @default(cuid())
+  expiresIn Int
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+
+  @@map("refresh_Token")
 }

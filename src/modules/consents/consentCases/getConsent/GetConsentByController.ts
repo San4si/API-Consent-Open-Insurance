@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { GetConsentByCase } from "./getConsentByCase";
+import { GetConsentByCase } from "./GetConsentByCase";
 
 export class GetConsentByController {
   async handle(req: Request, res: Response) {
@@ -7,6 +7,6 @@ export class GetConsentByController {
 
     const result = await getConsentByCase.execute();
 
-    return res.status(201).json(result);
+    return res.status(200).json(result);
   }
 }

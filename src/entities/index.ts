@@ -30,7 +30,7 @@ export interface Document {
   identification: string;
   rel: string;
   LoggedUser: LoggedUser[];
-  createdAt: string;
+  createdAt: Date | string;
   BusinessEntity: BusinessEntity[];
 }
 
@@ -65,4 +65,13 @@ export interface Meta {
   totalRecords: number;
   requestDateTime: string;
   Consent: Consent[];
+}
+
+export interface User {
+  id: String;
+  name: String;
+  email: String;
+  password: String;
+  document: Document;
+  documentId: String;
 }

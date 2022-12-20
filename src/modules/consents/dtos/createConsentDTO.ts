@@ -1,4 +1,4 @@
-import { BusinessEntity, Link, LoggedUser, Meta } from "../../../entities";
+import { BusinessEntity, LoggedUser } from "../../../entities";
 
 export interface CreateConsentDTO {
   expirationDateTime: string;

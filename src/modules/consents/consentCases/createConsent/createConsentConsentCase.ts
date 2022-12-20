@@ -1,5 +1,4 @@
 import { Consent } from "@prisma/client";
-
 import { prisma } from "../../../../prisma/client";
 import { CreateConsentDTO } from "../../dtos/createConsentDTO";
 import { v4 as uuidv4 } from "uuid";
