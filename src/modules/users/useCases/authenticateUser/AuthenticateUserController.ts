@@ -6,13 +6,15 @@ class AuthenticateUserController {
     const { email, password } = req.body;
 
     const authenticateUserUseCase = new AuthenticateUserUseCase();
-
-    const token = await authenticateUserUseCase.execute({
-      email,
-      password,
-    });
-
-    return res.json(token);
+    try {
+      const token = await authenticateUserUseCase.execute({
+        email,
+        password,
+      });
+      return res.json(token);
+    } catch ({ message }) {
+      res.status(400).json({ message });
+    }
   }
 }
 

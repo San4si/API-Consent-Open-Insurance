@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "API Consents - Open Insurance Brasil",
-    "description": "API que trata da criação, consulta e revogação de consentimentos para o Open Insurance Brasil Fase 2 - customer-data.  \nNão possui segregação entre pessoa natural e pessoa jurídica.    \n\n# Orientações importantes\nA API Consents trata dos consentimentos exclusivamente para a fase 2 do Open Insurance Brasil.\n- As informações da instituição receptora não trafegam na API Consents – a autenticação da receptora se dá através do [DCR](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-dynamic-client-registration-1_ID2-ptbr.html).   \n- Na chamada para a criação do consentimento deve-se utilizar um token gerado via `client_credentials`.\n- Após o `POST` de criação do consentimento, o `STATUS` devolvido na resposta deverá ser `AWAITING_AUTHORISATION`.\n- O `STATUS` será alterado para `AUTHORISED` somente após autenticação e confirmação por parte do usuário na instituição transmissora dos dados.\n- Todas as datas trafegadas nesta API seguem o padrão da [RFC3339](https://tools.ietf.org/html/rfc3339) e formato \"zulu\".\n- A descrição do fluxo de consentimento encontra-se disponível no [Portal do desenvolvedor](https://openinsurance-brasil.github.io/areadesenvolvedor/#em-revisao-fluxo-de-consentimento).\n- O arquivo com o mapeamento completo entre `Roles`, `scopes` e `permissions` está disponibilizado no Portal do desenvolvedor, no mesmo item acima - descrição do fluxo de consentimento.\n- A receptora deve enviar obrigatoriamente, no pedido de criação de consentimento, todas as permissions dos agrupamentos de dados as quais ela deseja consentimento, conforme tabela ",
+    "description": "API que trata da criação, consulta e revogação de consentimentos para o Open Insurance Brasil Fase 2 - customer-data.  \nNão possui segregação entre pessoa natural e pessoa jurídica.    \n\n# Orientações importantes\nA API Consents trata dos consentimentos exclusivamente para a fase 2 do Open Insurance Brasil.\n- As informações da instituição receptora não trafegam na API Consents – a autenticação da receptora se dá através do [DCR](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-dynamic-client-registration-1_ID2-ptbr.html).   \n- Na chamada para a criação do consentimento deve-se utilizar um token gerado via `client_credentials`.\n- Após o `POST` de criação do consentimento, o `STATUS` devolvido na resposta deverá ser `AWAITING_AUTHORISATION`.\n- O `STATUS` será alterado para `AUTHORISED` somente após autenticação e confirmação por parte do usuário na instituição transmissora dos dados.\n\n- `Usuário deve entrar no sistema para gerar o token, sem o token não é possível usar os métodos \"Post\", \"Put\",  \"Delete\".`\n- `Para logar deve entrar com seu \"e-mail\" da GFT e digitar a senha: \"1234\".\n`",
     "version": "1.0.0",
     "license": {
       "name": "Apache 2.0",
@@ -10,6 +10,7 @@
     },
     "contact": {
       "name": "San4si - Especificações",
+
       "email": "san_juq@hotmail.com",
       "url": "https://san4si.github.io/Meu-Portif-lio/"
     }
@@ -27,6 +28,63 @@
     }
   ],
   "paths": {
+    "/login": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Logar no sistema.",
+        "description": "Método para logar no sistema.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUser"
+              }
+            }
+          },
+          "description": "Payload para logar no sistema.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201UserLogado"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "default": {
+            "$ref": "#/components/responses/Default"
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Obter a lista de usuários cadastrados no sistema por ordem decrescente",
+        "operationId": "UsersGetUsers",
+        "description": "Método para obter a lista ordenada de usuários",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/201UserList"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "default": {
+            "$ref": "#/components/responses/Default"
+          }
+        }
+      }
+    },
     "/consent": {
       "post": {
         "tags": ["Consents"],
@@ -102,6 +160,35 @@
         "security": [{ "bearerAuth": [] }]
       }
     },
+    "/consent/": {
+      "get": {
+        "tags": ["Consents"],
+        "summary": "Obter a lista de consentimentos por ordem decrescente",
+        "operationId": "consentsGetConsents",
+        "description": "Método para obter a lista ordenada de consentimentos",
+        "responses": {
+          "200": {
+            "$ref": "#components/responses/200ConsentsConsentRead"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "default": {
+            "$ref": "#/components/responses/Default"
+          }
+        }
+      }
+    },
+
     "/consent/{consentId}": {
       "get": {
         "tags": ["Consents"],
@@ -149,6 +236,79 @@
           },
           "406": {
             "$ref": "#/components/responses/NotAcceptable"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "default": {
+            "$ref": "#/components/responses/Default"
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      },
+      "put": {
+        "tags": ["Consents"],
+        "summary": "Atualizar consentimento.",
+        "operationId": "consentsPutConsents",
+        "description": "Método para atualizar consentimento.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/consentId"
+          },
+          {
+            "$ref": "#/components/parameters/xFapiAuthDate"
+          },
+          {
+            "$ref": "#/components/parameters/xFapiCustomerIpAddress"
+          },
+          {
+            "$ref": "#/components/parameters/xFapiInteractionId"
+          },
+          {
+            "$ref": "#/components/parameters/xCustomerUserAgent"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConsent"
+              }
+            }
+          },
+          "description": "Atualização do consentimento.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201ConsentsUpdate"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptable"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
           },
           "422": {
             "$ref": "#/components/responses/UnprocessableEntity"
@@ -231,6 +391,97 @@
   },
   "components": {
     "schemas": {
+      "UpdateConsent": {
+        "type": "object",
+        "properties": {
+          "permissions": {
+            "type": "array",
+            "items": {
+              "description": "Especifica os tipos de permissões de acesso às APIs no escopo do Open Insurance Brasil - Fase 2, de acordo com os blocos de consentimento fornecidos pelo usuário e necessários ao acesso a cada endpoint das APIs.",
+              "type": "string",
+              "enum": [
+                "CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ",
+                "CUSTOMERS_PERSONAL_ADITTIONALINFO_READ",
+                "CUSTOMERS_PERSONAL_QUALIFICATION_READ",
+                "CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ",
+                "CUSTOMERS_BUSINESS_QUALIFICATION_READ",
+                "CUSTOMERS_BUSINESS_ADITTIONALINFO_READ",
+                "CAPITALIZATION_TITLES_READ",
+                "CAPITALIZATION_TITLES_POLICYINFO_READ",
+                "CAPITALIZATION_TITLES_PREMIUM_READ",
+                "CAPITALIZATION_TITLES_CLAIM_READ",
+                "PENSION_RISK_READ",
+                "PENSION_RISK_CONTRACTINFO_READ",
+                "PENSION_RISK_CONTRIBUTIONS_READ",
+                "DAMAGES_AND_PEOPLE_PATRIMONIAL_READ",
+                "DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_AERONAUTICAL_READ",
+                "DAMAGES_AND_PEOPLE_AERONAUTICAL_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_AERONAUTICAL_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_AERONAUTICAL_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_NAUTICAL_READ",
+                "DAMAGES_AND_PEOPLE_NAUTICAL_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_NAUTICAL_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_NAUTICAL_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_NUCLEAR_READ",
+                "DAMAGES_AND_PEOPLE_NUCLEAR_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_NUCLEAR_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_NUCLEAR_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_OIL_READ",
+                "DAMAGES_AND_PEOPLE_OIL_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_OIL_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_OIL_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ",
+                "DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_TRANSPORT_READ",
+                "DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ",
+                "DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_RURAL_READ",
+                "DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_AUTO_READ",
+                "DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_HOUSING_READ",
+                "DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ",
+                "DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ",
+                "DAMAGES_AND_PEOPLE_PERSON_READ",
+                "DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ",
+                "DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ",
+                "DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ",
+                "RESOURCES_READ"
+              ]
+            },
+            "example": [
+              "PENSION_RISK_READ",
+              "CAPITALIZATION_TITLES_READ",
+              "RESOURCES_READ"
+            ]
+          },
+          "status": {
+            "description": "Estado atual do consentimento cadastrado.",
+            "type": "string",
+            "enum": ["AUTHORISED", "AWAITING_AUTHORISATION", "REJECTED"],
+            "example": "AWAITING_AUTHORISATION"
+          }
+        }
+      },
       "Links": {
         "type": "object",
         "description": "Referências para outros recusos da API requisitada.",
@@ -306,7 +557,142 @@
         },
         "additionalProperties": false
       },
+      "LoginUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "renan.figueiredo@gft.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "1234"
+          }
+        }
+      },
       "CreateConsent": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["permissions", "loggedUser", "expirationDateTime"],
+            "properties": {
+              "loggedUser": {
+                "$ref": "#/components/schemas/LoggedUser"
+              },
+              "businessEntity": {
+                "$ref": "#/components/schemas/BusinessEntity"
+              },
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "description": "Especifica os tipos de permissões de acesso às APIs no escopo do Open Insurance Brasil - Fase 2, de acordo com os blocos de consentimento fornecidos pelo usuário e necessários ao acesso a cada endpoint das APIs.",
+                  "type": "string",
+                  "enum": [
+                    "CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ",
+                    "CUSTOMERS_PERSONAL_ADITTIONALINFO_READ",
+                    "CUSTOMERS_PERSONAL_QUALIFICATION_READ",
+                    "CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ",
+                    "CUSTOMERS_BUSINESS_QUALIFICATION_READ",
+                    "CUSTOMERS_BUSINESS_ADITTIONALINFO_READ",
+                    "CAPITALIZATION_TITLES_READ",
+                    "CAPITALIZATION_TITLES_POLICYINFO_READ",
+                    "CAPITALIZATION_TITLES_PREMIUM_READ",
+                    "CAPITALIZATION_TITLES_CLAIM_READ",
+                    "PENSION_RISK_READ",
+                    "PENSION_RISK_CONTRACTINFO_READ",
+                    "PENSION_RISK_CONTRIBUTIONS_READ",
+                    "DAMAGES_AND_PEOPLE_PATRIMONIAL_READ",
+                    "DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_AERONAUTICAL_READ",
+                    "DAMAGES_AND_PEOPLE_AERONAUTICAL_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_AERONAUTICAL_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_AERONAUTICAL_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_NAUTICAL_READ",
+                    "DAMAGES_AND_PEOPLE_NAUTICAL_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_NAUTICAL_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_NAUTICAL_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_NUCLEAR_READ",
+                    "DAMAGES_AND_PEOPLE_NUCLEAR_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_NUCLEAR_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_NUCLEAR_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_OIL_READ",
+                    "DAMAGES_AND_PEOPLE_OIL_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_OIL_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_OIL_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ",
+                    "DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_TRANSPORT_READ",
+                    "DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ",
+                    "DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_RURAL_READ",
+                    "DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_AUTO_READ",
+                    "DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_HOUSING_READ",
+                    "DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ",
+                    "DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ",
+                    "DAMAGES_AND_PEOPLE_PERSON_READ",
+                    "DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ",
+                    "DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ",
+                    "DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ",
+                    "RESOURCES_READ"
+                  ]
+                },
+                "minItems": 1,
+                "example": [
+                  "PENSION_RISK_READ",
+                  "CAPITALIZATION_TITLES_READ",
+                  "RESOURCES_READ"
+                ]
+              },
+              "expirationDateTime": {
+                "description": "Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).",
+                "type": "string",
+                "maxLength": 20,
+                "format": "date-time",
+                "example": "2021-05-21T08:30:00Z"
+              },
+              "transactionFromDateTime": {
+                "description": "Data e hora da transação inicial. Se não for preenchido, a transação terá a data aberta e a data será retornada com a primeira transação disponível. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).",
+                "type": "string",
+                "maxLength": 20,
+                "format": "date-time",
+                "example": "2021-01-01T00:00:00Z"
+              },
+              "transactionToDateTime": {
+                "description": "Data e hora final da transação. Se não for preenchido, a transação terá a data aberta e a data será retornada com a ultima transação disponível. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).",
+                "type": "string",
+                "maxLength": 20,
+                "format": "date-time",
+                "example": "2021-02-01T23:59:59Z"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "Consent": {
         "type": "object",
         "required": ["data"],
         "properties": {
@@ -448,7 +834,7 @@
                 "type": "string",
                 "pattern": "^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\\-.:=@;$_!*'%\\/?#]+$",
                 "maxLength": 256,
-                "example": "urn:prudential:C1DD93123"
+                "example": "urn:mapfre:f602d655-06cb-4bed-b8c7-2c37991183c8"
               },
               "creationDateTime": {
                 "description": "Data e hora em que o recurso foi criado. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).",
@@ -461,7 +847,7 @@
                 "description": "Estado atual do consentimento cadastrado.",
                 "type": "string",
                 "enum": ["AUTHORISED", "AWAITING_AUTHORISATION", "REJECTED"],
-                "example": "AWAITING_AUTHORISATION"
+                "example": ["AUTHORISED", "AWAITING_AUTHORISATION", "REJECTED"]
               },
               "statusUpdateDateTime": {
                 "description": "Data e hora em que o recurso foi atualizado. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).",
@@ -699,7 +1085,7 @@
         "name": "Authorization",
         "in": "header",
         "description": "Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado",
-        "required": true,
+        "required": false,
         "schema": {
           "type": "string",
           "pattern": "[\\w\\W\\s]*",
@@ -895,6 +1281,60 @@
           }
         }
       },
+      "201ConsentsUpdate": {
+        "description": "Consentimento atualizado com sucesso.",
+        "headers": {
+          "x-fapi-interaction-id": {
+            "description": "Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  \nSe fornecido, o transmissor deve \"reproduzir\" esse valor no cabeçalho de resposta.          \n",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-]{0,99}$",
+              "minLength": 1,
+              "maxLength": 100,
+              "example": "73cac523-d3ae-2289-b106-330a6218710d"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseConsent"
+            }
+          }
+        }
+      },
+      "201UserLogado": {
+        "description": "Login realizado com sucesso.",
+        "headers": {
+          "x-fapi-interaction-id": {
+            "description": "Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  \nSe fornecido, o transmissor deve \"reproduzir\" esse valor no cabeçalho de resposta.          \n",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-]{0,99}$",
+              "minLength": 1,
+              "maxLength": 100,
+              "example": "73cac523-d3ae-2289-b106-330a6218710d"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/LoginUser"
+            }
+          }
+        }
+      },
+      "201UserList": {
+        "description": "Retorno de Lista de usuários com sucesso.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/LoginUser"
+            }
+          }
+        }
+      },
       "200ConsentsConsentIdRead": {
         "description": "Consentimento consultado com sucesso.",
         "headers": {
@@ -909,6 +1349,16 @@
             }
           }
         },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseConsent"
+            }
+          }
+        }
+      },
+      "200ConsentsConsentRead": {
+        "description": "Lista de todos os Consentimentos com sucesso.",
         "content": {
           "application/json": {
             "schema": {
