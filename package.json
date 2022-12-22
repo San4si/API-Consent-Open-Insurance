@@ -19,7 +19,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "tsx watch src/server.ts"
+    "start": "npx prisma migrate dev --name createDB && tsx watch src/server.ts"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
