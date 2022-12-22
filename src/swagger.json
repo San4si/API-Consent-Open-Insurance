@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "https://api-consent-open-insurance-production.up.railway.app/",
+      "url": "https://api-consent-open-insurance-production.up.railway.app/v1",
       "description": "Servidor de Produção"
     }
   ],
