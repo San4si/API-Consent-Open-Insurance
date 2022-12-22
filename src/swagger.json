@@ -37,7 +37,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginUser"
+                "$ref": "#/components/schemas/CreateUser"
               }
             }
           },
@@ -75,6 +75,36 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "default": {
+            "$ref": "#/components/responses/Default"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Cadastrar no sistema.",
+        "description": "Método para cadastrar no sistema.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUser"
+              }
+            }
+          },
+          "description": "Payload para cadastrar usuário no sistema.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201UserCreate"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -558,6 +588,19 @@
         "additionalProperties": false
       },
       "LoginUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin@admin.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "1234"
+          }
+        }
+      },
+      "CreateUser": {
         "type": "object",
         "properties": {
           "email": {
@@ -1309,6 +1352,16 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/LoginUser"
+            }
+          }
+        }
+      },
+      "201UserCreate": {
+        "description": "Usuário cadastrado com sucesso.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CreateUser"
             }
           }
         }
