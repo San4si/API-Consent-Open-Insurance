@@ -232,9 +232,6 @@
             "$ref": "#/components/parameters/consentId"
           },
           {
-            "$ref": "#/components/parameters/Authorization"
-          },
-          {
             "$ref": "#/components/parameters/xFapiAuthDate"
           },
           {
@@ -409,6 +406,40 @@
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "default": {
+            "$ref": "#/components/responses/Default"
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/consent/document/{document}": {
+      "get": {
+        "tags": ["Consents"],
+        "summary": "Obter detalhes do consentimento identificado por CPF.",
+        "operationId": "consentsGetConsentsDocument",
+        "description": "Método para obter detalhes do consentimento identificado por CPF.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/document"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200ConsentsConsentIdRead"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1127,6 +1158,16 @@
         "schema": {
           "type": "string",
           "pattern": "^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\\-.:=@;$_!*'%\\/?#]+$",
+          "maxLength": 256
+        }
+      },
+      "document": {
+        "name": "document",
+        "in": "path",
+        "description": "O CPF é o identificador único de documento da pessoa fisica.\n",
+        "required": true,
+        "schema": {
+          "type": "string",
           "maxLength": 256
         }
       },

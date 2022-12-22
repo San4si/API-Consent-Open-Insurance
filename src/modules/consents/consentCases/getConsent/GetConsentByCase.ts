@@ -7,6 +7,13 @@ export class GetConsentByCase {
       orderBy: {
         creationDateTime: "desc",
       },
+      include: {
+        loggedUser: {
+          select: {
+            document: true,
+          },
+        },
+      },
     });
     return consents;
   }
