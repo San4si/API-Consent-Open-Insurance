@@ -4,8 +4,9 @@ import { AuthenticateUserUseCase } from "./AuthenticateUserUseCase";
 class AuthenticateUserController {
   async handle(req: Request, res: Response) {
     const { email, password } = req.body;
-
+    console.log(req.body);
     const authenticateUserUseCase = new AuthenticateUserUseCase();
+
     try {
       const token = await authenticateUserUseCase.execute({
         email,
