@@ -37,7 +37,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUser"
+                "$ref": "#/components/schemas/LoginUser"
               }
             }
           },
@@ -92,7 +92,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginUser"
+                "$ref": "#/components/schemas/CreateUser"
               }
             }
           },
