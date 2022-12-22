@@ -83,7 +83,9 @@
             "$ref": "#/components/responses/Default"
           }
         }
-      },
+      }
+    },
+    "/user/": {
       "post": {
         "tags": ["Users"],
         "summary": "Cadastrar no sistema.",
