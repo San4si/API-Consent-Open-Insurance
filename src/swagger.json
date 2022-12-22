@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3333/v1",
+      "url": "https://api-consent-open-insurance-production.up.railway.app/",
       "description": "Servidor de Produção"
     }
   ],
