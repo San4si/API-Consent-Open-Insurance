@@ -58,4 +58,6 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
 app.use(errorHandler);
 
-app.listen(3333, () => console.log("Server is running in port 3333"));
+app.listen(process.env.PORT, () =>
+  console.log("Server is running in port " + process.env.PORT)
+);
