@@ -605,9 +605,13 @@
       "CreateUser": {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string",
+            "example": "Paulo"
+          },
           "email": {
             "type": "string",
-            "example": "admin@admin.com"
+            "example": "paulo@admin.com"
           },
           "password": {
             "type": "string",
