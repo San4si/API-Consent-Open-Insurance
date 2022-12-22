@@ -19,7 +19,7 @@ class AuthenticateUserUseCase {
       },
     });
     if (!userAlreadyExists) {
-      throw new Error("User or password incorrect");
+      throw new Error("User or password incorrect 1");
     }
 
     // Verificar se a senha está correta
@@ -27,7 +27,7 @@ class AuthenticateUserUseCase {
     const passwordMatch = await compare(password, userAlreadyExists.password);
 
     if (!passwordMatch) {
-      throw new Error("User or password incorrect");
+      throw new Error("User or password incorrect 2");
     }
     //Gerar token do usuário
     const generateTokenProvider = new GenerateTokenProvider();
